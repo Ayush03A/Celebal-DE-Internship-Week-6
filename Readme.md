@@ -43,15 +43,15 @@ This project demonstrates advanced data engineering patterns using **Azure Data 
   
 - ✅ `SHIR` visible and running in Integration Runtimes
   
-  ![SHIR](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/d21d972a22cf92c2181cb61d90d6924cca3ef01b/Screenshots/Integration%20runtimes.png)
+  ![SHIR](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/32e4cbefae8455cba8693b8e3df800e405e38562/Screenshots/Integration%20runtimes.png)
   
 - ✅ `PL_Full_OnPrem_Replication` pipeline copied all tables
 
-  ![`PL_Full_OnPrem_Replication` pipeline copied all tables](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/448a4319d023cc8a010f80b88e6bfa2917714585/Screenshots/PL_Full_OnPrem_Replication%20pipeline%20copied%20all%20tables.png)
+  ![`PL_Full_OnPrem_Replication` pipeline copied all tables](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/32e4cbefae8455cba8693b8e3df800e405e38562/Screenshots/PL_Full_OnPrem_Replication%20pipeline%20copied%20all%20tables.png)
   
 - ✅ Azure SQL DB showing all replicated tables
 
-  ![Azure SQL DB showing all replicated tables](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/d21d972a22cf92c2181cb61d90d6924cca3ef01b/Screenshots/Cloud_Destination_DB%20.png)
+  ![Azure SQL DB showing all replicated tables](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/32e4cbefae8455cba8693b8e3df800e405e38562/Screenshots/Cloud_Destination_DB%20.png)
 
 - ✅ Protocols for SQL Server
 
@@ -71,15 +71,15 @@ This project demonstrates advanced data engineering patterns using **Azure Data 
 📸 **Evidence:**
 - ✅ SFTP connection succeeded via SHIR
 
-  ![SFTP](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/448a4319d023cc8a010f80b88e6bfa2917714585/Screenshots/SFTP%20Linked%20Service%20in%20ADF.png)
+  ![SFTP](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/32e4cbefae8455cba8693b8e3df800e405e38562/Screenshots/SFTP%20Linked%20Service%20in%20ADF.png)
   
 - ✅ File `readme.txt` copied to Azure Blob Storage
 
-  ![File](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/448a4319d023cc8a010f80b88e6bfa2917714585/Screenshots/Azure%20Blob%20Storage%20account%20(container)%20.png)
+  ![File](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/32e4cbefae8455cba8693b8e3df800e405e38562/Screenshots/Azure%20Blob%20Storage%20account%20(container)%20.png)
   
 - ✅ Verified blob presence in `data-output` container
 
-  ![blob](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/448a4319d023cc8a010f80b88e6bfa2917714585/Screenshots/Created%20a%20Container.png)
+  ![blob](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/32e4cbefae8455cba8693b8e3df800e405e38562/Screenshots/Created%20a%20Container.png)
 
   
 
@@ -153,15 +153,15 @@ END
 📸 **Evidence:**
 - ✅ Monthly Trigger scheduled correctly
 
-  ![blob](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/24cf491d5d98dd42f8c534c99cfcab55f62f9a6d/Screenshots/TR_Monthly_Last_Saturday.png)
+  ![blob](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/32e4cbefae8455cba8693b8e3df800e405e38562/Screenshots/TR_Monthly_Last_Saturday.png)
   
 - ✅ Trigger fired successfully and executed master pipeline
 
-  ![blob]()
+  ![blob](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/32e4cbefae8455cba8693b8e3df800e405e38562/Screenshots/Master%20PL.png)
   
 - ✅ Retry logic handled transient failures in debug mode
 
-- ![blob](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/24cf491d5d98dd42f8c534c99cfcab55f62f9a6d/Screenshots/Retrieving%20data.%20Wait%20a%20few%20seconds%20and%20try%20to%20cut%20or%20copy%20again.png)
+- ![blob](https://github.com/Ayush03A/Celebal-DE-Internship-Week-6/blob/32e4cbefae8455cba8693b8e3df800e405e38562/Screenshots/Retrieving%20data.%20Wait%20a%20few%20seconds%20and%20try%20to%20cut%20or%20copy%20again.png)
 
 
 ---
