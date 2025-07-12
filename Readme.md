@@ -163,7 +163,7 @@ END
 
 Huge thanks to my amazing mentors and HR team for constant guidance and feedback throughout this journey:
 
-👨‍🏫 **Ajit Kumar Singh** – Technical Mentor  
+👨‍🏫 **Jash Tewani & Ajit Kumar Singh** – Technical Mentor  
 🙌 **Prerna Kamat** – HR, Celebal CSI  
 🙌 **Priyanshi Jain** – HR, Celebal CSI  
 🏢 **Celebal Technologies** – For this amazing real-world data engineering internship
