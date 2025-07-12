@@ -1,124 +1,169 @@
-# Advanced Data Orchestration with Azure Data Factory 🚀
+
+# Week 6 Assignment: Advanced Data Orchestration with Azure Data Factory 🚀
 
 ## 📋 Project Overview
 
-This project demonstrates advanced data engineering patterns using **Azure Data Factory (ADF)**. The focus is on building resilient, automated, and efficient pipelines for hybrid data movement, integration with external systems, and modern data warehousing techniques.
+This project demonstrates advanced data engineering patterns using **Azure Data Factory (ADF)**. The focus is on building **resilient, automated, and efficient pipelines** for hybrid data movement, external integration, and incremental data warehousing.
+
+> 🔗 **Thanks to [CSI (Celebal Summer Internship)](https://www.celebaltech.com/)**  
+> This task deepened my understanding of cloud-scale data pipelines, showcasing real-world techniques and design considerations.
 
 ---
 
-## 🛠️ Technologies & Concepts Demonstrated
+## 🛠️ Technologies Used
 
-*   **Hybrid Data Movement:** Self-hosted Integration Runtime (SHIR)
-*   **External Integration:** SFTP Connector
-*   **Data Warehousing:** Incremental Loading (High-Watermark Method)
-*   **Advanced Orchestration:** Complex Triggers, Activity Chaining
-*   **Pipeline Resilience:** Retry Logic for Transient Failures
-*   **Core Services:** Azure Data Factory, Azure SQL Database, Azure Blob Storage, On-Premises SQL Server
+- **Orchestration:** Azure Data Factory (ADF)
+- **Cloud Services:** Azure SQL Database, Azure Blob Storage
+- **On-Premises:** SQL Server via SHIR
+- **External Source:** SFTP Server (test.rebex.net)
+- **Runtime:** Self-Hosted Integration Runtime (SHIR)
+- **Automation:** Schedule Triggers, Retry Logic
 
 ---
 
 ## 📂 Project Tasks & Implementation
 
-### 1. Hybrid Data Movement: On-Premises to Cloud 🏢☁️
+### 1️⃣ Hybrid Data Movement: On-Premise SQL Server to Azure SQL Database 🏢☁️
 
-**Objective:** Securely extract data from a local SQL Server and load it into an Azure SQL Database using a Self-hosted Integration Runtime (SHIR).
+**Objective:** Securely extract **all tables** from a local SQL Server and load them into Azure SQL DB using **Self-hosted Integration Runtime (SHIR)**.
 
-**Architecture:**
-*   A **local SQL Server** (simulated on a Windows machine) was set up with the Northwind database.
-*   The **Self-hosted Integration Runtime (SHIR)** software was installed on the local machine.
-*   The SHIR was securely registered with my Azure Data Factory instance using an authentication key. This created a secure bridge between the on-premises network and the Azure cloud.
-*   An ADF pipeline was built to copy the `dbo.Orders` table from the local server to an Azure SQL Database.
+#### Steps:
+- Used my **friend’s Windows system** to install **SQL Server** and set up the **Northwind DB** (since I use a **MacBook**).
+- Installed **Self-Hosted Integration Runtime (SHIR)** and registered it in my Azure Data Factory.
+- Created a **dynamic pipeline (`PL_Full_OnPrem_Replication`)** that:
+  - Uses a `Lookup` activity to list all table names
+  - Applies `ForEach` + `Copy data` to replicate **all tables**
+- Also replicated the same setup using a **Virtual Machine** for validation.
 
-**Evidence of Success:** 📸
-*A screenshot showing the SHIR connected and running in the ADF Manage tab.*
-`![SHIR Connected](path/to/shir-running.png)`
-
-*A screenshot of the successful pipeline run moving data from on-prem to the cloud.*
-`![On-Prem Pipeline Run](path/to/onprem-run.png)`
-
----
-
-### 2. External System Integration: SFTP Data Extraction 🤝
-
-**Objective:** Connect to an external partner's SFTP server to extract files.
-
-**Implementation:**
-*   A `Linked Service` was configured to connect to a public test SFTP server (`test.rebex.net`).
-*   A `Copy data` pipeline (`PL_SFTP_File_Copy`) was built to transfer a file (`readme.txt`) from the SFTP server.
-*   The file was copied in **Binary format** to preserve its integrity and loaded into Azure Blob Storage.
-
-**Evidence of Success:** 📸
-*A screenshot showing the `readme.txt` file in the Azure Blob Storage container.*
-`![SFTP Output File](path/to/sftp-output.png)`
+📸 **Evidence:**
+- ✅ `SHIR` visible and running in Integration Runtimes  
+- ✅ `PL_Full_OnPrem_Replication` pipeline copied all tables  
+- ✅ Azure SQL DB showing all replicated tables  
 
 ---
 
-### 3. Incremental Data Loading (High-Watermark Method) 📈
+### 2️⃣ External System Integration: SFTP File Extraction 📥
 
-**Objective:** Design an efficient daily pipeline that only processes new or updated records from a source table.
+**Objective:** Connect to an external SFTP server and copy files to Azure Blob Storage.
 
-**Implementation:**
-This pattern uses four sequential activities to ensure data integrity and efficiency.
+#### Steps:
+- Configured linked service to **`test.rebex.net`** (public SFTP)
+- Built pipeline `PL_SFTP_File_Copy` to download `readme.txt` using Binary format
+- Stored in Azure Blob Storage container `data-output`
 
-1.  **`Lookup 1: GetOldWatermark`**: Retrieves the latest `OrderDate` from the last successful run, which is stored in a dedicated watermark table in the destination database.
-2.  **`Lookup 2: GetNewWatermark`**: Finds the maximum `OrderDate` from the on-premises source table.
-3.  **`Copy data: CopyDelta`**: Copies only the rows where the `OrderDate` is greater than the old watermark and less than or equal to the new one.
-4.  **`Stored Procedure: UpdateWatermark`**: If the copy succeeds, this activity updates the watermark table with the new watermark value, preparing for the next run.
-
-**SQL Scripts Used:**
-
-*   **Watermark Table Creation:**
-    ```sql
-    CREATE TABLE dbo.WatermarkTable (
-        TableName NVARCHAR(255) PRIMARY KEY,
-        WatermarkValue DATETIME
-    );
-    INSERT INTO dbo.WatermarkTable (TableName, WatermarkValue) VALUES ('Orders', '1990-01-01');
-    ```
-
-*   **Stored Procedure for Updates:**
-    ```sql
-    CREATE PROCEDURE dbo.sp_UpdateWatermark
-        @NewWatermarkValue DATETIME,
-        @TableName NVARCHAR(255)
-    AS
-    BEGIN
-        UPDATE dbo.WatermarkTable
-        SET WatermarkValue = @NewWatermarkValue
-        WHERE TableName = @TableName;
-    END
-    ```
-
-*   **Dynamic Query in Copy Activity Source:**
-    ```javascript
-    @concat('SELECT * FROM dbo.Orders WHERE OrderDate > ''', activity('GetOldWatermark').output.firstRow.WatermarkValue, ''' AND OrderDate <= ''', activity('GetNewWatermark').output.firstRow.NewWatermark, '''')
-    ```
-
-**Evidence of Success:** 📸
-*A screenshot of the incremental pipeline canvas.*
-`![Incremental Pipeline Canvas](path/to/incremental-pipeline.png)`
-
-*A screenshot showing the second debug run where `Rows written: 0`, proving the incremental logic works.*
-`![Incremental Proof Run](path/to/incremental-proof.png)`
+📸 **Evidence:**
+- ✅ SFTP connection succeeded via SHIR  
+- ✅ File `readme.txt` copied to Azure Blob Storage  
+- ✅ Verified blob presence in `data-output` container  
 
 ---
 
-### 4. Advanced Automation & Resilience ⚙️
+### 3️⃣ Incremental Loading Using High-Watermark Logic 📈
 
-**Objective:** Implement custom scheduling and improve pipeline resilience.
+**Objective:** Move only new or updated data from the Orders table using watermark pattern.
 
-**Implementation:**
+#### Activities Used:
+- `Lookup: GetOldWatermark`
+- `Lookup: GetNewWatermark`
+- `Copy data: CopyDelta`
+- `Stored Procedure: UpdateWatermark`
 
-*   **Custom Monthly Trigger:** An ADF trigger was configured to run a pipeline on a specific schedule: the **Last Saturday of every month**. This is ideal for month-end financial or summary reports.
+#### SQL Scripts Used:
 
-    `![Custom Monthly Trigger](path/to/monthly-trigger.png)`
+```sql
+-- Create watermark table
+CREATE TABLE dbo.WatermarkTable (
+    TableName NVARCHAR(255) PRIMARY KEY,
+    WatermarkValue DATETIME
+);
+INSERT INTO dbo.WatermarkTable VALUES ('Orders', '1990-01-01');
+```
 
-*   **Activity Retry Logic:** The `Copy data` activities were configured with a **Retry** count of `3` and a **Retry Interval** of `30` seconds. This makes the pipeline more resilient by automatically retrying on transient network or service issues without failing the entire run.
+```sql
+-- Stored procedure to update watermark
+CREATE PROCEDURE dbo.sp_UpdateWatermark
+    @NewWatermarkValue DATETIME,
+    @TableName NVARCHAR(255)
+AS
+BEGIN
+    UPDATE dbo.WatermarkTable
+    SET WatermarkValue = @NewWatermarkValue
+    WHERE TableName = @TableName;
+END
+```
 
-    `![Retry Logic Configuration](path/to/retry-config.png)`
+```sql
+-- Dynamic query for Copy Activity
+@concat(
+  'SELECT * FROM dbo.Orders WHERE OrderDate > ''',
+  activity('GetOldWatermark').output.firstRow.WatermarkValue,
+  ''' AND OrderDate <= ''',
+  activity('GetNewWatermark').output.firstRow.NewWatermark,
+  ''''
+)
+```
+
+📸 **Evidence:**
+- ✅ Watermark table created successfully  
+- ✅ Lookup activities fetched dynamic watermark  
+- ✅ Incremental logic validated by copying only new rows  
+- ✅ Stored procedure executed and updated watermark  
 
 ---
 
-## 💡 Key Learnings
+### 4️⃣ Pipeline Resilience & Automation ⚙️
 
-This assignment provided deep, practical experience in core data engineering concepts beyond simple data movement. I successfully implemented a hybrid data solution, integrated with external systems, built an efficient data warehousing pattern, and configured advanced automation and resilience features, all within Azure Data Factory.
+**Objective:** Add reliability with retry logic and automate runs with monthly trigger.
+
+#### Implementation:
+- Configured **Retry Count: 3**, **Interval: 30 seconds** on critical activities
+- Created **custom trigger** to run on the **last Saturday of every month at 7 AM**
+
+📸 **Evidence:**
+- ✅ Monthly Trigger scheduled correctly  
+- ✅ Trigger fired successfully and executed master pipeline  
+- ✅ Retry logic handled transient failures in debug mode  
+
+---
+
+## ✅ Summary Table
+
+| Task                              | Status   |
+| --------------------------------- | -------- |
+| Hybrid On-Prem → Azure SQL        | ✅ Done  |
+| SFTP File Transfer → Blob Storage | ✅ Done  |
+| Incremental Copy via Watermark    | ✅ Done  |
+| Retry Logic + Monthly Trigger     | ✅ Done  |
+
+---
+
+## ❗ Challenges Faced
+
+- 💻 I use a **MacBook**, so I couldn’t run SQL Server locally.
+  - 👉 Used my **friend’s Windows machine** to install and run SQL Server
+- 🧪 Also tried a **Windows Virtual Machine** on Azure for better testing flexibility.
+- 🔐 Faced issues with **SHIR registration and connection**, had to regenerate keys multiple times.
+- 🔁 Copying **all tables dynamically** needed handling table names with spaces/brackets.
+- 🐞 Debugged dynamic SQL expressions in Copy Activities using JSON input tracing.
+
+---
+
+## 🧠 Key Learnings
+
+- Built **hybrid pipelines** securely using Self-hosted IR
+- Created **metadata-driven pipelines** with Lookup + ForEach
+- Applied **watermark logic** for incremental loads
+- Successfully handled **external integration via SFTP**
+- Automated data pipelines with **custom triggers and retry handling**
+- Gained **hands-on project experience** with ADF pipeline design
+
+---
+
+## 🙏 Acknowledgements
+
+Huge thanks to my amazing mentors and HR team for constant guidance and feedback throughout this journey:
+
+👨‍🏫 **Ajit Kumar Singh** – Technical Mentor  
+🙌 **Prerna Kamat** – HR, Celebal CSI  
+🙌 **Priyanshi Jain** – HR, Celebal CSI  
+🏢 **Celebal Technologies** – For this amazing real-world data engineering internship
