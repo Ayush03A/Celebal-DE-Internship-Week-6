@@ -1,5 +1,5 @@
 
-# Week 6 Assignment: Advanced Data Orchestration with Azure Data Factory 🚀
+# Week 6 Assignment: Hybrid ETL, SFTP Integration & Triggered Data Workflows 🚀
 
 ## 📋 Project Overview
 
